@@ -5,7 +5,7 @@
         static void Main(string[] args)
         {
             Console.WriteLine("Hello, Galactic Quest!");
-
+            Console.WriteLine("Hello, Galactic Quest!");
             OpenMainMenu();
         }
 
