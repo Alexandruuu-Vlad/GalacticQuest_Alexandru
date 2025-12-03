@@ -5,9 +5,120 @@
         static void Main(string[] args)
         {
             Console.WriteLine("Hello, Galactic Quest!");
-            Console.WriteLine("Hello, Galactic Quest!");
             OpenMainMenu();
         }
+
+        internal class Item
+        {
+            public string Name { get; set; }
+            public int Value { get; set; }
+            public Item(string name, int value)
+            {
+                Name = name;
+                Value = value;
+            }
+        }
+        internal class Player
+        {
+        internal static int health = 100; 
+        internal static int credits = 50;
+        internal static List<Item> inventory = new List<Item>();
+        }
+        
+        internal static void UpdateInventory(Item item, int quantity)
+        {
+            if (quantity > 0)
+            {
+                for (int i = 0; i < quantity; i++)
+                {
+                    Player.inventory.Add(item);
+                }
+                Console.WriteLine($"\n(+) Added {quantity}x {item.Name}");
+            }
+            else if (quantity < 0)
+            {
+                int amountToRemove = Math.Abs(quantity);
+                int removedCount = 0;
+                for (int i = 0; i < amountToRemove; i++)
+                {
+                    Item itemToDelete = null;
+                    foreach (Item currentItem in Player.inventory)
+                    {
+                        if (currentItem.Name == item.Name)
+                        {
+                            itemToDelete = currentItem;
+                            break; 
+                        }
+                    }
+
+                    if (itemToDelete != null)
+                    {
+                        Player.inventory.Remove(itemToDelete);
+                        removedCount++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (removedCount > 0)
+                {
+                    Console.WriteLine($"\n(-) Removed {removedCount}x {item.Name}");
+                }
+                else
+                {
+                    Console.WriteLine($"\n(!) You don't have any {item.Name} to remove!");
+                }
+            }
+        }
+
+        internal static void ShowInventory()
+        {
+            Console.WriteLine("\n--- PLAYER INVENTORY ---");
+            if (Player.inventory.Count == 0)
+            {
+                Console.WriteLine("(Empty)");
+            }
+            else
+            {
+                foreach (Item item in Player.inventory)
+                {
+                    Console.WriteLine($"{item.Name}: {item.Value}");
+                }
+            }
+        }
+    internal static void OnDeath()
+        {
+            Console.WriteLine("Game Over");
+        }
+        internal static void TakeDamage(int damage)
+        {
+            Player.health -= damage;
+            if (Player.health <= 0)
+            {
+                OnDeath();
+            }
+        }
+
+        internal static void UpdateCredits(int amount)
+        {
+            if (amount < 0 && (Player.credits + amount < 0))
+            {
+                Console.WriteLine("Not enough credits!");
+                return;
+            }
+
+            Player.credits += amount;
+            
+            if (amount > 0)
+                Console.WriteLine($"You gained {amount} credits.");
+            else
+                Console.WriteLine($"You spent {Math.Abs(amount)} credits.");
+            
+            Console.WriteLine($"Current Balance: {Player.credits}");
+        }
+        
 
         internal static void OpenMainMenu()
         {
@@ -16,28 +127,33 @@
             while (isAppRunning)
             {
                 Console.WriteLine("\n");
+                Console.WriteLine($"Current Health: {Player.health} | Credits: {Player.credits}"); 
                 Console.WriteLine("Select your option and press Enter: \n 1.Travel \n 2.Journal \n 3.Exit \n");
                 int.TryParse(Console.ReadLine(), out int readOption);
 
-
-                switch (readOption)
+                try
                 {
-                    case (int)GameOptions.Monsters:
-                        OpenTravelMenu();
-                        break;
+                    switch (readOption)
+                    {
+                        case (int)GameOptions.Monsters:
+                            OpenTravelMenu();
+                            break;
 
-                    case (int)GameOptions.Journal:
-                        OpenJournalMenu();
-                        break;
+                        case (int)GameOptions.Journal:
+                            OpenJournalMenu();
+                            break;
 
-                    case (int)GameOptions.Exit:
-                        isAppRunning = false;
-                        break;
+                        case (int)GameOptions.Exit:
+                            isAppRunning = false;
+                            break;
 
-                    default:
-                        Console.WriteLine("-_-' Invalid Option");
-                        break;
-
+                        default:
+                            throw new Exception("-_-' Invalid Option");
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Error");
                 }
             }
         }
@@ -60,10 +176,16 @@
             {
                 case 1:
                     Console.WriteLine("Selected Explore");
+                    Console.WriteLine("Goblin");
+                    TakeDamage(100);
                     break;
 
                 case 2:
                     Console.WriteLine("Selected Search For Items");
+                    Console.WriteLine("You searched the area...");
+                    Item foundItem = new Item("Spear", 15);
+                    UpdateCredits(42);
+                    UpdateInventory(foundItem, 3);
                     break;
 
                 case 3:
@@ -102,6 +224,7 @@
 
                 case 3:
                     Console.WriteLine("Selected Items");
+                    ShowInventory();
                     break;
 
                 case 4:
@@ -137,7 +260,7 @@
             for (int i = 0; i < monstersList.Count; ++i)
             {
                 string monsterKey = monstersList[i];
-                int monsterValue = 0; // default value
+                int monsterValue = 0;
 
                 if (hpOrAttack == "hp")
                 {
