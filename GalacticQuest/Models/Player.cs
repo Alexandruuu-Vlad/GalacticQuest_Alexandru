@@ -8,7 +8,7 @@ namespace GalacticQuest
     {
         public int Hp { get; private set; } = 100;
         public int Attack { get; private set; } = 10;
-
+        
         public IList<Item> Backpack { get; private set; } = new List<Item>();
         public int Credits { get; private set; } = 0;
 
