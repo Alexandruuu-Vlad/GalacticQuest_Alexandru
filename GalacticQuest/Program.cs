@@ -1,4 +1,5 @@
-﻿using GalacticQuest.Items;
+﻿using GalacticQuest.Files;
+using GalacticQuest.Items;
 using GalacticQuest.Monsters;
 using GalacticQuest.Planets;
 
@@ -11,7 +12,11 @@ namespace GalacticQuest
         {
             Console.WriteLine("Hello, Galactic Quest!");
 
-            OpenMainMenu();
+            //OpenMainMenu();
+
+            // Constructor called only once, even if we create 2 instances of FileManager
+            FileManager fm1 = FileManager.Instance;
+            FileManager fm2 = FileManager.Instance;
         }
 
         internal static void OpenMainMenu()
